@@ -54,11 +54,12 @@ int main() {
 	MEMORY_BASIC_INFORMATION region = { nullptr };
 	const auto status = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region, sizeof(region), nullptr);
 	// Print spoofed status
-	printf("[+] NtQVM status: 0x%04X\n", status);
+	std::cout << "[+] NtQVM status: " << std::hex << status << std::endl;
 
+	// TO DO - Safe syscalls ( for internal calls in EasySafe )
 	MEMORY_BASIC_INFORMATION region2 = { nullptr };
 	const auto InlineStatus = INLINE_SYSCALL(NtQueryVirtualMemory)(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
-	printf("[+] NtQVM status2: 0x%04X\n", InlineStatus);
+	std::cout << "[+] NtQVM status: " << std::hex << InlineStatus << std::endl;
 
 	return 0;
 }
