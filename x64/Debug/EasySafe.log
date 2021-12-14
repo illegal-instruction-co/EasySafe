@@ -1,2 +1,3 @@
-﻿utility\inline_syscall\Main.cpp(10,7): warning : unused variable 'instance' [-Wunused-variable]
+﻿EasySafe\EasySafe.hpp(1,9): warning : #pragma once in main file [-Wpragma-once-outside-header]
+utility\inline_syscall\Main.cpp(14,7): warning : unused variable 'instance' [-Wunused-variable]
   EasySafe.vcxproj -> C:\Users\PC\source\repos\EasySafe\x64\Debug\EasySafe.exe

@@ -11,7 +11,6 @@ int main() {
 	* struct Payload;
 	*/
 
-
 	auto instance = (new II::EasySafe({ true }))->Init();
 
 	return 0;

@@ -19,6 +19,10 @@ namespace II {
 			g_config = config;
 		}
 
+		inline void onStart() {
+			std::cout << "EasySafe instance started successfully!" << std::endl;
+		}
+
 		inline bool Init() noexcept {
 
 			/*
@@ -36,6 +40,8 @@ namespace II {
 					return false;
 				};
 			}
+
+			onStart();
 
 			return true;
 		}
