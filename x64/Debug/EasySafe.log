@@ -1,1 +1,2 @@
-﻿  EasySafe.vcxproj -> C:\Users\PC\source\repos\EasySafe\x64\Debug\EasySafe.exe
+﻿utility\inline_syscall\Main.cpp(10,7): warning : unused variable 'instance' [-Wunused-variable]
+  EasySafe.vcxproj -> C:\Users\PC\source\repos\EasySafe\x64\Debug\EasySafe.exe

@@ -1,2 +1,2 @@
-﻿  EasySafe.cpp
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe.cpp(1,10): fatal error C1083: içerme dosyası açılamıyor: 'EasySafe.h': No such file or directory
+﻿EasySafe.cpp(15,1): warning : non-void function does not return a value [-Wreturn-type]
+  EasySafe.vcxproj -> C:\Users\PC\source\repos\EasySafe\x64\Release\EasySafe.exe
