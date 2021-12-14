@@ -1,2 +1,4 @@
-﻿EasySafe.cpp(15,1): warning : non-void function does not return a value [-Wreturn-type]
+﻿  Assembling EasySafe\utility\instrumentation_callbacks\minwinasm.asm...
+utility\inline_syscall\Main.cpp(57,39): warning : format specifies type 'unsigned int' but the argument has type 'long' [-Wformat]
+utility\inline_syscall\Main.cpp(70,40): warning : format specifies type 'unsigned int' but the argument has type 'long' [-Wformat]
   EasySafe.vcxproj -> C:\Users\PC\source\repos\EasySafe\x64\Release\EasySafe.exe

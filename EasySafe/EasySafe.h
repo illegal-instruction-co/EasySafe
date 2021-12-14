@@ -13,6 +13,9 @@
 
 #include <windows.h>
 #include <iostream>
+#include <functional>
+#include <thread>
+#include <future>
 
 /*
 * Config
@@ -32,6 +35,17 @@
 
 #include <utility/inline_syscall/in_memory_init.hpp>
 
+/*
+* Instrumentation callbacks 
+* -----------------
+* https://bestofcpp.com/repo/Deputation-instrumentation_callbacks-cpp-utilities
+* -----------------
+* Who are the naughty boys? Let's catch
+* -----------------
+* Credits wlan, Alex Ionescu 
+*/
+
+#include <utility/instrumentation_callbacks/minwin.hpp>
 
 /*
 * Tests

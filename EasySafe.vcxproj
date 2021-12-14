@@ -54,6 +54,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.props" />
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
@@ -119,6 +120,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -135,6 +138,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>Async</ExceptionHandling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,20 +149,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EasySafe\EasySafe.hpp" />
+    <ClCompile Include="EasySafe\EasySafe.cpp" />
     <ClCompile Include="utility\inline_syscall\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EasySafe\config.h" />
     <ClInclude Include="EasySafe\EasySafe.h" />
+    <ClInclude Include="EasySafe\EasySafe.hpp" />
     <ClInclude Include="EasySafe\utility\inline_syscall\inline_syscall.hpp" />
     <ClInclude Include="EasySafe\utility\inline_syscall\in_memory_init.hpp" />
     <ClInclude Include="EasySafe\tests.hpp" />
+    <ClInclude Include="EasySafe\utility\instrumentation_callbacks\minwin.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EasySafe\utility\inline_syscall\inline_syscall.inl" />
   </ItemGroup>
+  <ItemGroup>
+    <MASM Include="EasySafe\utility\instrumentation_callbacks\minwinasm.asm" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(VCTargetsPath)\BuildCustomizations\masm.targets" />
   </ImportGroup>
 </Project>

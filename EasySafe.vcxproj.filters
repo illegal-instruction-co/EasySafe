@@ -30,6 +30,12 @@
     <ClInclude Include="EasySafe\EasySafe.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
+    <ClInclude Include="EasySafe\utility\instrumentation_callbacks\minwin.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
+    <ClInclude Include="EasySafe\EasySafe.hpp">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="EasySafe\utility\inline_syscall\inline_syscall.inl">
@@ -40,8 +46,13 @@
     <ClCompile Include="utility\inline_syscall\Main.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="EasySafe\EasySafe.hpp">
+    <ClCompile Include="EasySafe\EasySafe.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <MASM Include="EasySafe\utility\instrumentation_callbacks\minwinasm.asm">
+      <Filter>Kaynak Dosyalar</Filter>
+    </MASM>
   </ItemGroup>
 </Project>

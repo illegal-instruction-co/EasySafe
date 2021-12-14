@@ -1,29 +1,71 @@
-#pragma once
+#pragma once 
 #include <EasySafe.h>
 
 namespace II {
+	extern __int64 g_currentInstance;
+	extern __int64 GetCurrentInstance() noexcept;
+}
+
+namespace II {
+
 	class EasySafe {
 	public:
 		/*
-		* Payload
+		* Payloads
 		*/
 		struct Payload {
 			bool tests = false;
+			bool syscall_hooking = false;
 		};
-	private: 
+
+		struct RegisterPayload {
+			bool use = false;
+			uintptr_t _R10 = 0x0;
+			uintptr_t _RAX = 0X0;
+		};
+
+		PROCESS_INSTRUMENTATION_CALLBACK_INFORMATION i_cb = { 0 };
+		bool m_i_cb_flag = false;
+		std::vector<uintptr_t> m_hookedSyscalls = {};
+
+	private:
 		Tests* g_tests;
 		Payload g_config;
+		std::function<void()> m_onStartCallback;
+		std::function<void()> m_onBeforeStartCallback;
+		std::function<II::EasySafe::RegisterPayload (PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> m_onSysHookCallback;
+
 	public:
 
-		EasySafe(Payload config) {
+		EasySafe(Payload config) noexcept {
 			g_config = config;
+			II::g_currentInstance = (__int64)this;
 		}
 
-		inline void onStart() {
-			std::cout << "EasySafe instance started successfully!" << std::endl;
+		inline void AddSysHook(uintptr_t addr) noexcept {
+			return m_hookedSyscalls.push_back(addr);
+		}
+
+		inline void onSysHook(std::function<II::EasySafe::RegisterPayload (PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> callback) {
+			m_onSysHookCallback = callback;
+		}
+
+		inline II::EasySafe::RegisterPayload runSysHook(PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX) {
+			return m_onSysHookCallback(symbol_info, R10, RAX);
+		}
+
+		inline void afterStart(std::function<void()> callback) noexcept {
+			m_onStartCallback = callback;
+		}
+
+		inline void beforeStart(std::function<void()> callback) noexcept {
+			m_onBeforeStartCallback = callback;
 		}
 
 		inline bool Init() noexcept {
+
+			// Call on before start callback
+			m_onBeforeStartCallback();
 
 			/*
 			* Setup inline syscalls
@@ -41,10 +83,28 @@ namespace II {
 				};
 			}
 
-			onStart();
+			/*
+			* Setup instrumentation callbacks
+			*/
+
+			SymSetOptions(SYMOPT_UNDNAME);
+			SymInitialize(GetCurrentProcess(), nullptr, TRUE);
+
+			// Reserved is always 0
+			i_cb.Reserved = 0;
+			// x64 = 0, x86 = 1
+			i_cb.Version = CALLBACK_VERSION;
+			// Set our asm callback handler
+			i_cb.Callback = medium;
+
+			// Setup the hook
+			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
+
+			// Call on start callback
+			m_onStartCallback();
 
 			return true;
 		}
-	};
 
+	};
 }
