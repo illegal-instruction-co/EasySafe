@@ -64,7 +64,7 @@ namespace II {
 			return hr;
 		}
 
-		inline result_t InlineSyscalls() noexcept {
+		__forceinline result_t InlineSyscalls() noexcept {
 			/*
 			* Setup inline syscalls
 			*/
@@ -81,7 +81,7 @@ namespace II {
 			return II_S_OK;
 		}
 
-		inline result_t IC() noexcept {
+		__forceinline result_t IC() noexcept {
 			result_t hr = II_S_OK;
 			SymSetOptions(SYMOPT_UNDNAME);
 			SymInitialize(GetCurrentProcess(), nullptr, TRUE) == true ? hr = II_S_OK : hr = II_E_INVALIDARG;
@@ -120,7 +120,7 @@ namespace II {
 			return hr;
 		}
 
-		inline void AddLogC(int type, const char* string, fmt::printf_args formatList) {
+		__forceinline void AddLogC(int type, const char* string, fmt::printf_args formatList) {
 			if (g_config.logs) {
 				auto msg = fmt::vsprintf(string, formatList);
 				switch (type)
@@ -153,15 +153,15 @@ namespace II {
 		}
 
 		template<typename... TArgs>
-		inline void AddLog(int type, const char* string, const TArgs&... args) noexcept {
+		__forceinline void AddLog(int type, const char* string, const TArgs&... args) noexcept {
 			AddLogC(type, string, fmt::make_printf_args(args...));
 		}
 
-		inline void AddSysHook(uintptr_t addr) noexcept {
+		__forceinline void AddSysHook(uintptr_t addr) noexcept {
 			return m_hookedSyscalls.push_back(addr);
 		}
 
-		inline result_t SafeSyscall(std::function<void()> callback) noexcept {
+		__forceinline result_t SafeSyscall(std::function<void()> callback) noexcept {
 
 			result_t hr = II_S_OK;
 
@@ -183,23 +183,23 @@ namespace II {
 			return hr;
 		}
 
-		inline void onSysHook(std::function<II::EasySafe::RegisterPayload (PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> callback) {
+		__forceinline void onSysHook(std::function<II::EasySafe::RegisterPayload (PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> callback) {
 			m_onSysHookCallback = callback;
 		}
 
-		inline II::EasySafe::RegisterPayload RunSysHook(PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX) {
+		__forceinline II::EasySafe::RegisterPayload RunSysHook(PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX) {
 			return m_onSysHookCallback(symbol_info, R10, RAX);
 		}
 
-		inline void afterStart(std::function<void()> callback) noexcept {
+		__forceinline void afterStart(std::function<void()> callback) noexcept {
 			m_onStartCallback = callback;
 		}
 
-		inline void beforeStart(std::function<void()> callback) noexcept {
+		__forceinline void beforeStart(std::function<void()> callback) noexcept {
 			m_onBeforeStartCallback = callback;
 		}
 
-		inline result_t Init() noexcept {
+		__forceinline result_t Init() noexcept {
 
 			result_t hr = II_S_OK;
 
