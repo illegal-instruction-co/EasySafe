@@ -13,6 +13,7 @@ int main() {
 	* struct Payload {
 	*   bool logs = true;
 	*	bool tests = false;
+	*   bool not_allow_byte_patching = true;
 	*	bool syscall_hooking = false;
 	*	bool loadlibrary_hook = false;
 	*	std::vector<std::string> dwAllowDll;
@@ -26,6 +27,7 @@ int main() {
 	};
 
 	auto instance = (new II::EasySafe({ true,
+		true,
 		true,
 		true,
 		true, DllWhitelist }));
@@ -57,6 +59,13 @@ int main() {
 			0xDEADBEEF		// spoofed RAX
 		});
 		return spoof;
+	});
+
+	/*
+	* Setup our LoadLibrary injection callback
+	*/
+	instance->onLoadLibraryInjection([&](const char* dllPath) {
+		instance->AddLog(1, "Lucky DLL: %s", dllPath);
 	});
 
 	/*

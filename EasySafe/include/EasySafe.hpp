@@ -18,6 +18,7 @@ namespace II {
 		struct Payload {
 			bool logs = true;
 			bool tests = false;
+			bool not_allow_byte_patching = true;
 			bool syscall_hooking = false;
 			bool loadlibrary_hook = false;
 			std::vector<std::string> dwAllowDll;
@@ -46,7 +47,8 @@ namespace II {
 		Payload g_config;
 		std::function<void()> m_onStartCallback;
 		std::function<void()> m_onBeforeStartCallback;
-		std::function<II::EasySafe::RegisterPayload (PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> m_onSysHookCallback;
+		std::function<II::EasySafe::RegisterPayload(PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> m_onSysHookCallback;
+		std::function<void(const char* dllPath)> m_onLoadLibraryProtectionCallback;
 
 	/*
 	* Private functions
@@ -141,6 +143,11 @@ namespace II {
 			}
 		}
 
+		__forceinline result_t BytePatchingProtection() {
+			result_t hr = II_S_OK;
+			return hr;
+		}
+
 	/*
 	* Public functions
 	*/
@@ -187,6 +194,14 @@ namespace II {
 			m_onSysHookCallback = callback;
 		}
 
+		__forceinline void onLoadLibraryInjection(std::function<void(const char* dllPath)> callback) {
+			m_onLoadLibraryProtectionCallback = callback;
+		}
+
+		__forceinline void RunLoadLibraryInjection(const char* dllPath) {
+			return m_onLoadLibraryProtectionCallback(dllPath);
+		}
+
 		__forceinline II::EasySafe::RegisterPayload RunSysHook(PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX) {
 			return m_onSysHookCallback(symbol_info, R10, RAX);
 		}
@@ -225,6 +240,11 @@ namespace II {
 
 			if (g_config.syscall_hooking) if (hr = II_FAILED(IC())) return hr;
 	
+			/*
+			* Start byte patching protection
+			*/
+			if (g_config.not_allow_byte_patching);
+
 			// Call on start callback
 			m_onStartCallback();
 

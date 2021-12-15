@@ -63,6 +63,7 @@ namespace II {
 
 		if (!bAllow)
 		{
+			currentInstance->RunLoadLibraryInjection(cDllName);
 			currentInstance->AddLog(2, "Blocked: %s", cDllName);
 		}
 
