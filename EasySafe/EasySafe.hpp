@@ -123,7 +123,7 @@ namespace II {
 				MEMORY_BASIC_INFORMATION region = { nullptr };
 				const auto status = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region, sizeof(region), nullptr);
 				// Print spoofed status
-				std::cout << "[UNSAFE] NtQVM status: " << std::hex << status << std::endl;
+				std::cout << "\n[UNSAFE] NtQVM status: " << std::hex << status << std::endl;
 
 				// Crash inline syscalls ( will be crash about 0xC0000005 )
 				// MEMORY_BASIC_INFORMATION region2 = { nullptr };
