@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# Ignore x64 
+x64
