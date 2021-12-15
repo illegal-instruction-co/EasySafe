@@ -174,6 +174,10 @@ namespace II {
 					if (GetModuleFileNameEx(hProcess, hMods[i], szModName,
 						sizeof(szModName) / sizeof(TCHAR)))
 					{
+						/*
+						* to do
+						* new_scalar.cpp issue exits
+						*/
 						std::thread([&] {
 							while (true) {
 								static auto module = GetModuleHandle(szModName);
@@ -201,8 +205,10 @@ namespace II {
 													}
 												}
 											}
+											std::this_thread::sleep_for(std::chrono::milliseconds(250));
 										}
 									});
+									std::this_thread::sleep_for(std::chrono::milliseconds(250));
 								}
 								std::this_thread::sleep_for(std::chrono::milliseconds(2500));
 							}
