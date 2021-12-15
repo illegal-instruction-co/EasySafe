@@ -56,6 +56,7 @@ namespace II {
 		* Changable allowed shared paged modules ? 
 		*/
 		std::vector<std::string> m_sharedAllowedModules = {
+							std::string(""),
 							std::string("C:\\WINDOWS\\System32\\bcryptPrimitives.dll")
 		};
 
@@ -189,15 +190,14 @@ namespace II {
 											void* manipuledAddress = ((PMEMORY_BASIC_INFORMATION)&Mbi)[k].BaseAddress;
 											for (int i = 0; i < len / sizeof(PSAPI_WORKING_SET_EX_INFORMATION); i++) {
 												if (((PPSAPI_WORKING_SET_EX_INFORMATION)&Mbi)[i].VirtualAttributes.Shared) {
-													for (auto dll : m_sharedAllowedModules)
-													{
-														std::wstring moduleW(&szModName[0]); //convert to wstring
-														std::string moduleStr(moduleW.begin(), moduleW.end());
-														if ((moduleStr != dll)) {
-															// Byte patched
-															this->AddLog(1, "Byte patched on: %s", moduleStr);
-															m_onBytePatchingProtectionCallback(moduleStr.c_str());
-														}
+													BOOL allowed = false;
+													std::wstring moduleW(&szModName[0]); //convert to wstring
+													std::string moduleStr(moduleW.begin(), moduleW.end());
+													for (auto dll : m_sharedAllowedModules) if ((moduleStr == dll)) allowed = true;
+													if (!allowed) {
+														// Byte patched
+														this->AddLog(1, "Byte patched on: %s", moduleStr);
+														m_onBytePatchingProtectionCallback(moduleStr.c_str());
 													}
 												}
 											}
