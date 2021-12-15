@@ -71,8 +71,9 @@ namespace II {
 		}
 
 		inline result_t IC() noexcept {
+			result_t hr = II_S_OK;
 			SymSetOptions(SYMOPT_UNDNAME);
-			SymInitialize(GetCurrentProcess(), nullptr, TRUE);
+			SymInitialize(GetCurrentProcess(), nullptr, TRUE) == true ? hr = II_S_OK : hr = II_E_INVALIDARG;
 
 			// Reserved is always 0
 			i_cb.Reserved = 0;
@@ -82,7 +83,7 @@ namespace II {
 			i_cb.Callback = middleware;
 
 			// Setup the hook
-			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
+			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb)) == 0x0 ? hr = II_S_OK : hr = II_E_INVALIDARG;
 
 			if (g_config.tests) {
 				// Run hooked function to test the hook
@@ -105,7 +106,7 @@ namespace II {
 					std::cout << "[ SAFE ] NtQVM status2: " << std::hex << status2 << std::endl;
 					});
 			}
-			return II_S_OK;
+			return hr;
 		}
 
 	/*
@@ -122,14 +123,16 @@ namespace II {
 			return m_hookedSyscalls.push_back(addr);
 		}
 
-		inline void SafeSyscall(std::function<void()> callback) {
+		inline result_t SafeSyscall(std::function<void()> callback) noexcept {
+
+			result_t hr = II_S_OK;
 
 			// Check if unaffected functions don't crash
-			NtQuerySystemInformation((SYSTEM_INFORMATION_CLASS)0, nullptr, 0, nullptr);
+			NtQuerySystemInformation((SYSTEM_INFORMATION_CLASS)0, nullptr, 0, nullptr) == 0x0 ? hr = II_S_OK : hr = II_E_INVALIDARG;
 			i_cb.Callback = nullptr;
 
 			// Remove callback
-			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
+			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb)) == 0x0 ? hr = II_S_OK : hr = II_E_INVALIDARG;
 
 			callback();
 
@@ -137,7 +140,9 @@ namespace II {
 			i_cb.Callback = middleware;
 
 			// Setup the hook
-			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
+			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb)) == 0x0 ? hr = II_S_OK : hr = II_E_INVALIDARG;
+
+			return hr;
 		}
 
 		inline void onSysHook(std::function<II::EasySafe::RegisterPayload (PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> callback) {
