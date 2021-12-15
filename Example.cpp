@@ -1,3 +1,5 @@
+#define NOMINMAX
+
 #include <iostream>
 #include <EasySafe.hpp>
 
@@ -14,6 +16,8 @@ int main() {
 	* };
 	*/
 	auto instance = (new II::EasySafe({ true, true }));
+
+
 	/*
 	* Have a fantasy to do before the
 	* protection instance is started?
@@ -21,12 +25,16 @@ int main() {
 	instance->beforeStart([&]() {
 		std::cout << "Attempting to start EasySafe instance..." << std::endl;
 	});
+
+
 	/*
 	* Implement a syshook
 	* In case of a possible call, 
 	* we will call the given callback.
 	*/
 	instance->AddSysHook((__int64)GetProcAddress(GetModuleHandleA("ntdll"), "NtQueryVirtualMemory"));
+
+
 	/*
 	* Setup our sys callback
 	*/
@@ -40,6 +48,8 @@ int main() {
 		});
 		return spoof;
 	});
+
+
 	/*
 	* Have a fantasy to do after the 
 	* protection instance is started?
@@ -48,7 +58,12 @@ int main() {
 		std::cout << "EasySafe instance started successfully!" << std::endl;
 	});
 
+	/*
+	* Run EasySafe
+	*/
 	instance->Init();
 
-	return 0;
+	std::cin.clear();
+	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	std::cin.get();
 }
