@@ -117,6 +117,28 @@ namespace II {
 
 			// Setup the hook
 			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
+			
+			if (g_config.tests) {
+				// Run hooked function to test the hook
+				MEMORY_BASIC_INFORMATION region = { nullptr };
+				const auto status = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region, sizeof(region), nullptr);
+				// Print spoofed status
+				std::cout << "[UNSAFE] NtQVM status: " << std::hex << status << std::endl;
+
+				// Crash inline syscalls ( will be crash about 0xC0000005 )
+				// MEMORY_BASIC_INFORMATION region2 = { nullptr };
+				// const auto InlineStatus = INLINE_SYSCALL(NtQueryVirtualMemory)(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
+				// std::cout << "[+] NtQVM status: " << std::hex << InlineStatus << std::endl;
+
+				// Safe syscalls 
+				this->SafeSyscall([&]() {
+					// Run hooked function to test the hook
+					MEMORY_BASIC_INFORMATION region2 = { nullptr };
+					const auto status2 = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
+					// Print spoofed status
+					std::cout << "[ SAFE ] NtQVM status2: " << std::hex << status2 << std::endl;
+				});
+			}
 
 			// Call on start callback
 			m_onStartCallback();
