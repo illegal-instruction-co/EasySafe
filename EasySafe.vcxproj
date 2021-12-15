@@ -159,13 +159,13 @@
     <ClInclude Include="EasySafe\utility\inline_syscall\inline_syscall.hpp" />
     <ClInclude Include="EasySafe\utility\inline_syscall\in_memory_init.hpp" />
     <ClInclude Include="EasySafe\tests.hpp" />
-    <ClInclude Include="EasySafe\utility\instrumentation_callbacks\minwin.hpp" />
+    <ClInclude Include="EasySafe\utility\instrumentation_callbacks\middleware.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EasySafe\utility\inline_syscall\inline_syscall.inl" />
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="EasySafe\utility\instrumentation_callbacks\minwinasm.asm" />
+    <MASM Include="EasySafe\utility\instrumentation_callbacks\middleware.asm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

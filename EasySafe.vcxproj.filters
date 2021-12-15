@@ -30,10 +30,10 @@
     <ClInclude Include="EasySafe\EasySafe.h">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="EasySafe\utility\instrumentation_callbacks\minwin.hpp">
+    <ClInclude Include="EasySafe\EasySafe.hpp">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
-    <ClInclude Include="EasySafe\EasySafe.hpp">
+    <ClInclude Include="EasySafe\utility\instrumentation_callbacks\middleware.hpp">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
   </ItemGroup>
@@ -51,7 +51,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="EasySafe\utility\instrumentation_callbacks\minwinasm.asm">
+    <MASM Include="EasySafe\utility\instrumentation_callbacks\middleware.asm">
       <Filter>Kaynak Dosyalar</Filter>
     </MASM>
   </ItemGroup>

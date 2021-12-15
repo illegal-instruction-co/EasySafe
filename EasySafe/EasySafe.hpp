@@ -58,7 +58,7 @@ namespace II {
 			callback();
 
 			// Set our asm callback handler
-			i_cb.Callback = medium;
+			i_cb.Callback = middleware;
 
 			// Setup the hook
 			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
@@ -113,7 +113,7 @@ namespace II {
 			// x64 = 0, x86 = 1
 			i_cb.Version = CALLBACK_VERSION;
 			// Set our asm callback handler
-			i_cb.Callback = medium;
+			i_cb.Callback = middleware;
 
 			// Setup the hook
 			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));

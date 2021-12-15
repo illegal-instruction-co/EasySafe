@@ -1,10 +1,10 @@
 include ksamd64.inc
-EXTERN SysHook:NEAR
+EXTERN ?SysHook@II@@YA_K_K0@Z:NEAR
 .data 
 	value qword ?
 .code
 
-medium  PROC
+middleware  PROC
 	
 	; https://docs.microsoft.com/en-us/cpp/build/caller-callee-saved-registers
 
@@ -26,7 +26,7 @@ medium  PROC
 	sub rsp, 1000h
 	mov rdx, rax
 	mov rcx, r10
-	call SysHook
+	call ?SysHook@II@@YA_K_K0@Z
 	mov QWORD PTR [value], rax
 	add rsp, 1000h
 
@@ -46,6 +46,6 @@ medium  PROC
 	mov rax, qword ptr [value]
 
     jmp R10
-medium  ENDP
+middleware  ENDP
  
 END

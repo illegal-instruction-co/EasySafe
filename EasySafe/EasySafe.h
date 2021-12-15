@@ -46,9 +46,13 @@
 * Credits wlan, Alex Ionescu 
 */
 
-#include <utility/instrumentation_callbacks/minwin.hpp>
+#include <utility/instrumentation_callbacks/middleware.hpp>
 
 /*
 * Tests
 */
 #include <tests.hpp>
+
+namespace II {
+	extern uintptr_t SysHook(uintptr_t R10, uintptr_t RAX /*...*/);
+}
