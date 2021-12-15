@@ -16,9 +16,11 @@ namespace II {
 	*/
 	public:
 		struct Payload {
+			bool logs = true;
 			bool tests = false;
 			bool syscall_hooking = false;
 			bool loadlibrary_hook = false;
+			std::vector<std::string> dwAllowDll;
 		};
 
 		struct RegisterPayload {
@@ -34,6 +36,7 @@ namespace II {
 		PROCESS_INSTRUMENTATION_CALLBACK_INFORMATION i_cb = { 0 };
 		bool m_i_cb_flag = false;
 		std::vector<uintptr_t> m_hookedSyscalls = {};
+		std::vector<std::string> m_dwAllowDll;
 
 	/*
 	* Private variables
@@ -50,7 +53,15 @@ namespace II {
 	*/
 	private:
 	    inline result_t LoadLibraryProtection() noexcept {
-			return II_S_OK;
+
+			result_t hr = II_S_OK;
+
+			LdrLoadDll_t LdrLoadDll = (LdrLoadDll_t)GetProcAddress(LoadLibraryA("ntdll.dll"), "LdrLoadDll");
+
+			if(MH_CreateHook(LdrLoadDll, &II::LdrLoadDll_Detour, (LPVOID*)&II::LdrLoadDll_ptr) != MH_OK) hr = II_E_INVALIDARG;
+			if(MH_EnableHook(LdrLoadDll) != MH_OK) hr = II_E_INVALIDARG;
+
+			return hr;
 		}
 
 		inline result_t InlineSyscalls() noexcept {
@@ -61,10 +72,10 @@ namespace II {
 
 			__int64 status = g_tests->Inline_Syscalls();
 			if (status == 0) {
-				std::cout << "Inline syscalls test pass!" << std::endl;
+				this->AddLog(3, "Inline syscalls status: %b", status == 0x0);
 			}
 			else {
-				std::cout << "Inline syscalls status: " << status << std::endl;
+				this->AddLog(2, "Inline syscalls status: 0x%llx", status);
 				return II_E_NOTIMPL;
 			};
 			return II_S_OK;
@@ -90,7 +101,7 @@ namespace II {
 				MEMORY_BASIC_INFORMATION region = { nullptr };
 				const auto status = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region, sizeof(region), nullptr);
 				// Print spoofed status
-				std::cout << "\n[UNSAFE] NtQVM status: " << std::hex << status << std::endl;
+				this->AddLog(1, "[UNSAFE] NtQVM status:  0x%llx", status);
 
 				// Crash inline syscalls ( will be crash about 0xC0000005 )
 				// MEMORY_BASIC_INFORMATION region2 = { nullptr };
@@ -103,10 +114,31 @@ namespace II {
 					MEMORY_BASIC_INFORMATION region2 = { nullptr };
 					const auto status2 = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
 					// Print spoofed status
-					std::cout << "[ SAFE ] NtQVM status2: " << std::hex << status2 << std::endl;
+					this->AddLog(1, "[ SAFE ] NtQVM status2: 0x%llx", status2);
 					});
 			}
 			return hr;
+		}
+
+		inline void AddLogC(int type, const char* string, fmt::printf_args formatList) {
+			if (g_config.logs) {
+				auto msg = fmt::vsprintf(string, formatList);
+				switch (type)
+				{
+				case 1:
+					std::cout << "[LOG] " << msg << std::endl;
+					break;
+				case 2:
+					std::cerr << "[ERR] " << msg << std::endl;
+					break;
+				case 3: 
+					std::cout << "[SUC] " << msg << std::endl;
+					break;
+				default:
+					std::cout << msg << std::endl;
+					break;
+				}
+			}
 		}
 
 	/*
@@ -116,7 +148,13 @@ namespace II {
 
 		EasySafe(Payload config) noexcept {
 			g_config = config;
+			if (g_config.dwAllowDll.size() > 0) m_dwAllowDll = g_config.dwAllowDll;
 			II::g_currentInstance = (__int64)this;
+		}
+
+		template<typename... TArgs>
+		inline void AddLog(int type, const char* string, const TArgs&... args) noexcept {
+			AddLogC(type, string, fmt::make_printf_args(args...));
 		}
 
 		inline void AddSysHook(uintptr_t addr) noexcept {
@@ -164,6 +202,12 @@ namespace II {
 		inline result_t Init() noexcept {
 
 			result_t hr = II_S_OK;
+
+			// Init minhook
+			if (MH_Initialize() != MH_OK) {
+				hr = II_E_INVALIDARG; 
+				return hr;
+			}
 
 			// Call on before start callback
 			m_onBeforeStartCallback();

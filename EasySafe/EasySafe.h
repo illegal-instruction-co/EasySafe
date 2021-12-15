@@ -25,6 +25,11 @@
 #include <config.h>
 
 /*
+* FMT 
+*/
+#include <fmt/printf.h>
+
+/*
 * Inline syscalls.
 * -----------------
 * https://j00ru.vexillium.org/syscalls/win32k/64/
@@ -72,5 +77,12 @@
 #include <tests.hpp>
 
 namespace II {
+	typedef NTSTATUS (WINAPI* LdrLoadDll_t) (PWSTR SearchPath OPTIONAL,
+		PULONG DllCharacteristics OPTIONAL,
+		PUNICODE_STRING DllName,
+		PVOID* BaseAddress);
+
 	extern uintptr_t SysHook(uintptr_t R10, uintptr_t RAX /*...*/);
+	extern NTSTATUS __stdcall LdrLoadDll_Detour(PWSTR SearchPath OPTIONAL, PULONG DllCharacteristics OPTIONAL, PUNICODE_STRING DllName, PVOID* BaseAddress);
+	extern LdrLoadDll_t LdrLoadDll_ptr;
 }

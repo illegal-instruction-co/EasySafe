@@ -1,21 +1,16 @@
-﻿  In file included from EasySafe\EasySafe.cpp:1:
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(171,31): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(171,31): message : place parentheses around the assignment to silence this warning
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(171,31): message : use '==' to turn this assignment into an equality comparison
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(176,42): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(176,42): message : place parentheses around the assignment to silence this warning
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(176,42): message : use '==' to turn this assignment into an equality comparison
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(182,41): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(182,41): message : place parentheses around the assignment to silence this warning
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(182,41): message : use '==' to turn this assignment into an equality comparison
-  In file included from Example.cpp:4:
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(171,31): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(171,31): message : place parentheses around the assignment to silence this warning
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(171,31): message : use '==' to turn this assignment into an equality comparison
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(176,42): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(176,42): message : place parentheses around the assignment to silence this warning
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(176,42): message : use '==' to turn this assignment into an equality comparison
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(182,41): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(182,41): message : place parentheses around the assignment to silence this warning
-C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(182,41): message : use '==' to turn this assignment into an equality comparison
+﻿  In file included from Example.cpp:4:
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(61,21): warning : implicit conversion between pointer-to-function and pointer-to-object is a Microsoft extension [-Wmicrosoft-cast]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(61,33): warning : implicit conversion between pointer-to-function and pointer-to-object is a Microsoft extension [-Wmicrosoft-cast]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(62,21): warning : implicit conversion between pointer-to-function and pointer-to-object is a Microsoft extension [-Wmicrosoft-cast]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(215,31): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(215,31): message : place parentheses around the assignment to silence this warning
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(215,31): message : use '==' to turn this assignment into an equality comparison
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(220,42): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(220,42): message : place parentheses around the assignment to silence this warning
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(220,42): message : use '==' to turn this assignment into an equality comparison
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(226,41): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(226,41): message : place parentheses around the assignment to silence this warning
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(226,41): message : use '==' to turn this assignment into an equality comparison
+lld-link : warning : Cannot use debug info for 'fmtd.lib(format.cc.obj)' [LNK4099]
+  >>> failed to load reference 'F:\workspace\fmt-7.0.1\out\build\x64-Debug\CMakeFiles\fmt.dir\fmt.pdb': no such file or directory
   EasySafe.vcxproj -> C:\Users\PC\source\repos\EasySafe\x64\Debug\EasySafe.exe

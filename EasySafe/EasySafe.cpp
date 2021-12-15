@@ -42,4 +42,32 @@ namespace II {
 			return RAX;
 		}
 	}
+
+	NTSTATUS __stdcall LdrLoadDll_Detour(PWSTR SearchPath OPTIONAL, PULONG DllCharacteristics OPTIONAL, PUNICODE_STRING DllName, PVOID* BaseAddress)
+	{
+		II::EasySafe* currentInstance = (II::EasySafe*)II::GetCurrentInstance();
+
+		BOOL bAllow = FALSE;
+		CHAR cDllName[MAX_PATH];
+
+		sprintf(cDllName, "%S", DllName->Buffer);
+
+		for (auto& dll : currentInstance->m_dwAllowDll) // access by reference to avoid copying
+		{
+			if (strcmp(cDllName, dll.c_str()) == 0) {
+				bAllow = TRUE;
+				currentInstance->AddLog(1, "Allowing DLL: %s", cDllName);
+				return LdrLoadDll_ptr(SearchPath, DllCharacteristics, DllName, BaseAddress);
+			}
+		}
+
+		if (!bAllow)
+		{
+			currentInstance->AddLog(2, "Blocked: %s", cDllName);
+		}
+
+		return TRUE;
+	}
+
+	LdrLoadDll_t LdrLoadDll_ptr = nullptr;
 }

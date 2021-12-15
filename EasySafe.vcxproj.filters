@@ -44,6 +44,7 @@
     <None Include="EasySafe\utility\inline_syscall\inline_syscall.inl">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EasySafe\EasySafe.cpp">
