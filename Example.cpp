@@ -1,7 +1,7 @@
 #define NOMINMAX
 
 #include <iostream>
-#include <EasySafe.hpp>
+#include <EasySafe/include/EasySafe.hpp>
 
 int main() {
 

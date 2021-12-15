@@ -1,6 +1,6 @@
 #pragma once 
 
-#include <EasySafe.h>
+#include <EasySafe/src/EasySafe.h>
 
 namespace II {
 	extern __int64 g_currentInstance;

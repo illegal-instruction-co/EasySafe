@@ -1,4 +1,4 @@
-#include "EasySafe.hpp"
+#include <EasySafe/include/EasySafe.hpp>
 
 namespace II {
 	__int64 g_currentInstance;

@@ -21,8 +21,8 @@
 /*
 * Core
 */
-#include <Core.h>
-#include <config.h>
+#include <EasySafe/src/Core.h>
+#include <EasySafe/src/config.h>
 
 /*
 * FMT 
@@ -74,7 +74,7 @@
 /*
 * Tests
 */
-#include <tests.hpp>
+#include <EasySafe/src/tests.hpp>
 
 namespace II {
 	typedef NTSTATUS (WINAPI* LdrLoadDll_t) (PWSTR SearchPath OPTIONAL,

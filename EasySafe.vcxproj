@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\utility\minhook;C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\PC\source\repos\EasySafe\EasySafe;C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\utility\minhook;C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ExceptionHandling>Async</ExceptionHandling>
@@ -137,7 +137,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\utility\minhook;C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\PC\source\repos\EasySafe\EasySafe;C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\utility\minhook;C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ExceptionHandling>Async</ExceptionHandling>
@@ -151,17 +151,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="EasySafe\EasySafe.cpp" />
+    <ClCompile Include="EasySafe\src\EasySafe.cpp" />
     <ClCompile Include="Example.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EasySafe\config.h" />
-    <ClInclude Include="EasySafe\Core.h" />
-    <ClInclude Include="EasySafe\EasySafe.h" />
-    <ClInclude Include="EasySafe\EasySafe.hpp" />
+    <ClInclude Include="EasySafe\src\config.h" />
+    <ClInclude Include="EasySafe\src\Core.h" />
+    <ClInclude Include="EasySafe\src\EasySafe.h" />
+    <ClInclude Include="EasySafe\include\EasySafe.hpp" />
     <ClInclude Include="EasySafe\utility\inline_syscall\inline_syscall.hpp" />
     <ClInclude Include="EasySafe\utility\inline_syscall\in_memory_init.hpp" />
-    <ClInclude Include="EasySafe\tests.hpp" />
+    <ClInclude Include="EasySafe\src\tests.hpp" />
     <ClInclude Include="EasySafe\utility\instrumentation_callbacks\middleware.hpp" />
   </ItemGroup>
   <ItemGroup>
