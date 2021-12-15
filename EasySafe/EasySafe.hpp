@@ -9,10 +9,11 @@ namespace II {
 namespace II {
 
 	class EasySafe {
+
+	/*
+	* Public Payloads
+	*/
 	public:
-		/*
-		* Payloads
-		*/
 		struct Payload {
 			bool tests = false;
 			bool syscall_hooking = false;
@@ -24,10 +25,17 @@ namespace II {
 			uintptr_t _RAX = 0X0;
 		};
 
+	/*
+	* Public variables
+	*/
+	public: 
 		PROCESS_INSTRUMENTATION_CALLBACK_INFORMATION i_cb = { 0 };
 		bool m_i_cb_flag = false;
 		std::vector<uintptr_t> m_hookedSyscalls = {};
 
+	/*
+	* Private variables
+	*/
 	private:
 		Tests* g_tests;
 		Payload g_config;
@@ -35,6 +43,9 @@ namespace II {
 		std::function<void()> m_onBeforeStartCallback;
 		std::function<II::EasySafe::RegisterPayload (PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> m_onSysHookCallback;
 
+	/*
+	* Public functions
+	*/
 	public:
 
 		EasySafe(Payload config) noexcept {
@@ -105,41 +116,43 @@ namespace II {
 			* Setup instrumentation callbacks
 			*/
 
-			SymSetOptions(SYMOPT_UNDNAME);
-			SymInitialize(GetCurrentProcess(), nullptr, TRUE);
+			if (g_config.syscall_hooking) {
+				SymSetOptions(SYMOPT_UNDNAME);
+				SymInitialize(GetCurrentProcess(), nullptr, TRUE);
 
-			// Reserved is always 0
-			i_cb.Reserved = 0;
-			// x64 = 0, x86 = 1
-			i_cb.Version = CALLBACK_VERSION;
-			// Set our asm callback handler
-			i_cb.Callback = middleware;
+				// Reserved is always 0
+				i_cb.Reserved = 0;
+				// x64 = 0, x86 = 1
+				i_cb.Version = CALLBACK_VERSION;
+				// Set our asm callback handler
+				i_cb.Callback = middleware;
 
-			// Setup the hook
-			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
-			
-			if (g_config.tests) {
-				// Run hooked function to test the hook
-				MEMORY_BASIC_INFORMATION region = { nullptr };
-				const auto status = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region, sizeof(region), nullptr);
-				// Print spoofed status
-				std::cout << "\n[UNSAFE] NtQVM status: " << std::hex << status << std::endl;
+				// Setup the hook
+				NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
 
-				// Crash inline syscalls ( will be crash about 0xC0000005 )
-				// MEMORY_BASIC_INFORMATION region2 = { nullptr };
-				// const auto InlineStatus = INLINE_SYSCALL(NtQueryVirtualMemory)(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
-				// std::cout << "[+] NtQVM status: " << std::hex << InlineStatus << std::endl;
-
-				// Safe syscalls 
-				this->SafeSyscall([&]() {
+				if (g_config.tests) {
 					// Run hooked function to test the hook
-					MEMORY_BASIC_INFORMATION region2 = { nullptr };
-					const auto status2 = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
+					MEMORY_BASIC_INFORMATION region = { nullptr };
+					const auto status = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region, sizeof(region), nullptr);
 					// Print spoofed status
-					std::cout << "[ SAFE ] NtQVM status2: " << std::hex << status2 << std::endl;
-				});
-			}
+					std::cout << "\n[UNSAFE] NtQVM status: " << std::hex << status << std::endl;
 
+					// Crash inline syscalls ( will be crash about 0xC0000005 )
+					// MEMORY_BASIC_INFORMATION region2 = { nullptr };
+					// const auto InlineStatus = INLINE_SYSCALL(NtQueryVirtualMemory)(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
+					// std::cout << "[+] NtQVM status: " << std::hex << InlineStatus << std::endl;
+
+					// Safe syscalls 
+					this->SafeSyscall([&]() {
+						// Run hooked function to test the hook
+						MEMORY_BASIC_INFORMATION region2 = { nullptr };
+						const auto status2 = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
+						// Print spoofed status
+						std::cout << "[ SAFE ] NtQVM status2: " << std::hex << status2 << std::endl;
+						});
+				}
+			}
+	
 			// Call on start callback
 			m_onStartCallback();
 

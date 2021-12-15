@@ -15,8 +15,7 @@ int main() {
 	*	bool syscall_hooking = false;
 	* };
 	*/
-	auto instance = (new II::EasySafe({ true, true }));
-
+	auto instance = (new II::EasySafe({ false, true }));
 
 	/*
 	* Have a fantasy to do before the
@@ -26,14 +25,12 @@ int main() {
 		std::cout << "Attempting to start EasySafe instance..." << std::endl;
 	});
 
-
 	/*
 	* Implement a syshook
 	* In case of a possible call, 
 	* we will call the given callback.
 	*/
 	instance->AddSysHook((__int64)GetProcAddress(GetModuleHandleA("ntdll"), "NtQueryVirtualMemory"));
-
 
 	/*
 	* Setup our sys callback
@@ -48,7 +45,6 @@ int main() {
 		});
 		return spoof;
 	});
-
 
 	/*
 	* Have a fantasy to do after the 

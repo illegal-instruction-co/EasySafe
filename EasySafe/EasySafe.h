@@ -49,6 +49,23 @@
 #include <utility/instrumentation_callbacks/middleware.hpp>
 
 /*
+* Byte patching hooks
+* -----------------
+* Minhook 
+* -----------------
+* To do ( I was lazy to code )
+* -----------------
+* Credits
+* TsudaKageyu
+*/
+#include <utility\minhook\include\MinHook.h>
+#if defined _M_X64
+#pragma comment(lib, "libMinHook-x64-v141-mtd.lib")
+#elif defined _M_IX86
+#pragma comment(lib, "libMinHook-x86-v141-mtd.lib")
+#endif
+
+/*
 * Tests
 */
 #include <tests.hpp>
