@@ -51,6 +51,7 @@ namespace II {
 		std::function<II::EasySafe::RegisterPayload(PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> m_onSysHookCallback;
 		std::function<void(const char* dllPath)> m_onLoadLibraryProtectionCallback;
 		std::function<void(const char* dllPath)> m_onBytePatchingProtectionCallback;
+		std::vector<std::function<void()>> m_instanceTicks;
 
 		/*
 		* TO DO 
@@ -205,6 +206,10 @@ namespace II {
 														m_onBytePatchingProtectionCallback(moduleStr.c_str());
 													}
 												}
+												else {
+													DWORD oldp;
+													VirtualProtect(((PMEMORY_BASIC_INFORMATION)&Mbi)[k].BaseAddress, ((PMEMORY_BASIC_INFORMATION)&Mbi)[k].RegionSize, PAGE_WRITECOPY, &oldp);
+												}
 											}
 											std::this_thread::sleep_for(std::chrono::milliseconds(10));
 										}
@@ -220,6 +225,9 @@ namespace II {
 			return hr;
 		}
 
+		__forceinline void Tick(std::function<void()> cb) {
+			cb();
+		}
 	/*
 	* Public functions
 	*/
@@ -300,6 +308,11 @@ namespace II {
 			return II_S_OK;
 		}
 
+		__forceinline result_t RunInInstance(std::function<void()> callback) {
+			m_instanceTicks.push_back(callback);
+			return II_S_OK;
+		}
+
 		__forceinline result_t Init() noexcept {
 
 			result_t hr = II_S_OK;
@@ -334,6 +347,20 @@ namespace II {
 			// Call on start callback
 			m_onStartCallback();
 
+			/*
+			* Run in instance 
+			*/
+			std::thread([&] {
+				for (;;) {
+					for(auto& callback : m_instanceTicks)
+					{
+						std::thread([&]() {
+							Tick(callback);
+						}).detach();
+					}
+					std::this_thread::sleep_for(std::chrono::milliseconds(250));
+				}
+			}).detach();
 			return hr;
 		}
 

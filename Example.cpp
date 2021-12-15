@@ -31,10 +31,10 @@ int main() {
 	auto instance = (new II::EasySafe({ 
 		true,
 		true,
+		true,
 		false,
-		true,
-		true,
-		true, 
+		false,
+		false, 
 		DllWhitelist 
 	}));
 
@@ -103,13 +103,23 @@ int main() {
 	*/
 	// instance->StartNoAccessProtection();
 
-	int protectedInt = 10;
-	printf("Int addr: 0x%llx", &protectedInt);
+	instance->RunInInstance([&]() {
+		int protectedInt = 11;
 
-	while (true) {
-		std::cout << protectedInt << std::endl;
-		Sleep(500);
-	}
+		while (true) {
+			std::cout << protectedInt << std::endl;
+			Sleep(100);
+		}
+	});
+
+	instance->RunInInstance([&]() {
+		int protectedInt = 21;
+
+		while (true) {
+			std::cout << protectedInt << std::endl;
+			Sleep(500);
+		}
+		});
 
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
