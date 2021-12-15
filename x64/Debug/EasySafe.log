@@ -1,2 +1,21 @@
-﻿  Assembling EasySafe\utility\instrumentation_callbacks\middleware.asm...
+﻿  In file included from EasySafe\EasySafe.cpp:1:
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(166,31): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(166,31): message : place parentheses around the assignment to silence this warning
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(166,31): message : use '==' to turn this assignment into an equality comparison
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(171,42): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(171,42): message : place parentheses around the assignment to silence this warning
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(171,42): message : use '==' to turn this assignment into an equality comparison
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(177,41): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(177,41): message : place parentheses around the assignment to silence this warning
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe/EasySafe.hpp(177,41): message : use '==' to turn this assignment into an equality comparison
+  In file included from Example.cpp:4:
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(166,31): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(166,31): message : place parentheses around the assignment to silence this warning
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(166,31): message : use '==' to turn this assignment into an equality comparison
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(171,42): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(171,42): message : place parentheses around the assignment to silence this warning
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(171,42): message : use '==' to turn this assignment into an equality comparison
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(177,41): warning : using the result of an assignment as a condition without parentheses [-Wparentheses]
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(177,41): message : place parentheses around the assignment to silence this warning
+C:\Users\PC\source\repos\EasySafe\EasySafe\EasySafe\EasySafe.hpp(177,41): message : use '==' to turn this assignment into an equality comparison
   EasySafe.vcxproj -> C:\Users\PC\source\repos\EasySafe\x64\Debug\EasySafe.exe

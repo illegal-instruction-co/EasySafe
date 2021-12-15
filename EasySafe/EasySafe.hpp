@@ -1,4 +1,5 @@
 #pragma once 
+
 #include <EasySafe.h>
 
 namespace II {
@@ -17,6 +18,7 @@ namespace II {
 		struct Payload {
 			bool tests = false;
 			bool syscall_hooking = false;
+			bool loadlibrary_hook = false;
 		};
 
 		struct RegisterPayload {
@@ -42,6 +44,69 @@ namespace II {
 		std::function<void()> m_onStartCallback;
 		std::function<void()> m_onBeforeStartCallback;
 		std::function<II::EasySafe::RegisterPayload (PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> m_onSysHookCallback;
+
+	/*
+	* Private functions
+	*/
+	private:
+	    inline result_t LoadLibraryProtection() noexcept {
+			return II_S_OK;
+		}
+
+		inline result_t InlineSyscalls() noexcept {
+			/*
+			* Setup inline syscalls
+			*/
+			jm::init_syscalls_list();
+
+			__int64 status = g_tests->Inline_Syscalls();
+			if (status == 0) {
+				std::cout << "Inline syscalls test pass!" << std::endl;
+			}
+			else {
+				std::cout << "Inline syscalls status: " << status << std::endl;
+				return II_E_NOTIMPL;
+			};
+			return II_S_OK;
+		}
+
+		inline result_t IC() noexcept {
+			SymSetOptions(SYMOPT_UNDNAME);
+			SymInitialize(GetCurrentProcess(), nullptr, TRUE);
+
+			// Reserved is always 0
+			i_cb.Reserved = 0;
+			// x64 = 0, x86 = 1
+			i_cb.Version = CALLBACK_VERSION;
+			// Set our asm callback handler
+			i_cb.Callback = middleware;
+
+			// Setup the hook
+			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
+
+			if (g_config.tests) {
+				// Run hooked function to test the hook
+				MEMORY_BASIC_INFORMATION region = { nullptr };
+				const auto status = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region, sizeof(region), nullptr);
+				// Print spoofed status
+				std::cout << "\n[UNSAFE] NtQVM status: " << std::hex << status << std::endl;
+
+				// Crash inline syscalls ( will be crash about 0xC0000005 )
+				// MEMORY_BASIC_INFORMATION region2 = { nullptr };
+				// const auto InlineStatus = INLINE_SYSCALL(NtQueryVirtualMemory)(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
+				// std::cout << "[+] NtQVM status: " << std::hex << InlineStatus << std::endl;
+
+				// Safe syscalls 
+				this->SafeSyscall([&]() {
+					// Run hooked function to test the hook
+					MEMORY_BASIC_INFORMATION region2 = { nullptr };
+					const auto status2 = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
+					// Print spoofed status
+					std::cout << "[ SAFE ] NtQVM status2: " << std::hex << status2 << std::endl;
+					});
+			}
+			return II_S_OK;
+		}
 
 	/*
 	* Public functions
@@ -91,72 +156,30 @@ namespace II {
 			m_onBeforeStartCallback = callback;
 		}
 
-		inline bool Init() noexcept {
+		inline result_t Init() noexcept {
+
+			result_t hr = II_S_OK;
 
 			// Call on before start callback
 			m_onBeforeStartCallback();
 
-			/*
-			* Setup inline syscalls
-			*/
-			jm::init_syscalls_list();
+			if (g_config.tests) if (hr = II_FAILED(InlineSyscalls())) return hr;
 
-			if (g_config.tests) {
-				__int64 status = g_tests->Inline_Syscalls();
-				if (status == 0) {
-					std::cout << "Inline syscalls test pass!" << std::endl;
-				}
-				else {
-					std::cout << "Inline syscalls status: " << status << std::endl;
-					return false;
-				};
-			}
+			/*
+			* Setup loadlibrary protection
+			*/
+			if (g_config.loadlibrary_hook) if (hr = II_FAILED(LoadLibraryProtection())) return hr;
 
 			/*
 			* Setup instrumentation callbacks
 			*/
 
-			if (g_config.syscall_hooking) {
-				SymSetOptions(SYMOPT_UNDNAME);
-				SymInitialize(GetCurrentProcess(), nullptr, TRUE);
-
-				// Reserved is always 0
-				i_cb.Reserved = 0;
-				// x64 = 0, x86 = 1
-				i_cb.Version = CALLBACK_VERSION;
-				// Set our asm callback handler
-				i_cb.Callback = middleware;
-
-				// Setup the hook
-				NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
-
-				if (g_config.tests) {
-					// Run hooked function to test the hook
-					MEMORY_BASIC_INFORMATION region = { nullptr };
-					const auto status = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region, sizeof(region), nullptr);
-					// Print spoofed status
-					std::cout << "\n[UNSAFE] NtQVM status: " << std::hex << status << std::endl;
-
-					// Crash inline syscalls ( will be crash about 0xC0000005 )
-					// MEMORY_BASIC_INFORMATION region2 = { nullptr };
-					// const auto InlineStatus = INLINE_SYSCALL(NtQueryVirtualMemory)(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
-					// std::cout << "[+] NtQVM status: " << std::hex << InlineStatus << std::endl;
-
-					// Safe syscalls 
-					this->SafeSyscall([&]() {
-						// Run hooked function to test the hook
-						MEMORY_BASIC_INFORMATION region2 = { nullptr };
-						const auto status2 = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
-						// Print spoofed status
-						std::cout << "[ SAFE ] NtQVM status2: " << std::hex << status2 << std::endl;
-						});
-				}
-			}
+			if (g_config.syscall_hooking) if (hr = II_FAILED(IC())) return hr;
 	
 			// Call on start callback
 			m_onStartCallback();
 
-			return true;
+			return hr;
 		}
 
 	};

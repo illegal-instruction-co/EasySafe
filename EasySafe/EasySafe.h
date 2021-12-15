@@ -19,8 +19,9 @@
 #include <psapi.h>
 
 /*
-* Config
+* Core
 */
+#include <Core.h>
 #include <config.h>
 
 /*

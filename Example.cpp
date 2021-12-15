@@ -13,9 +13,10 @@ int main() {
 	* struct Payload {
 	*	bool tests = false;
 	*	bool syscall_hooking = false;
+	*	bool loadlibrary_hook = false;
 	* };
 	*/
-	auto instance = (new II::EasySafe({ false, true }));
+	auto instance = (new II::EasySafe({ true, true, true }));
 
 	/*
 	* Have a fantasy to do before the

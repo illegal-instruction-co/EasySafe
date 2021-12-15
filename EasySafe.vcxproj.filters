@@ -36,6 +36,9 @@
     <ClInclude Include="EasySafe\utility\instrumentation_callbacks\middleware.hpp">
       <Filter>Üst Bilgi Dosyaları</Filter>
     </ClInclude>
+    <ClInclude Include="EasySafe\Core.h">
+      <Filter>Üst Bilgi Dosyaları</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="EasySafe\utility\inline_syscall\inline_syscall.inl">

@@ -156,6 +156,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EasySafe\config.h" />
+    <ClInclude Include="EasySafe\Core.h" />
     <ClInclude Include="EasySafe\EasySafe.h" />
     <ClInclude Include="EasySafe\EasySafe.hpp" />
     <ClInclude Include="EasySafe\utility\inline_syscall\inline_syscall.hpp" />
