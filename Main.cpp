@@ -32,7 +32,7 @@ int main() {
 	*/
 	instance->onSysHook([&](PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX) {
 	// Print what we know
-	printf("[+] function: %s\n\treturn value: 0x%llx\n\treturn address: 0x%llx\n", symbol_info->Name, RAX, R10);
+		std::cout << "function: " << symbol_info->Name << " return value: " << std::hex << RAX << " return address:" << R10;
 		II::EasySafe::RegisterPayload spoof({
 			true,
 			R10,			// Original R10
@@ -54,13 +54,12 @@ int main() {
 	MEMORY_BASIC_INFORMATION region = { nullptr };
 	const auto status = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region, sizeof(region), nullptr);
 	// Print spoofed status
-	std::cout << "[+] NtQVM status: " << std::hex << status << std::endl;
+	std::cout << "[UNSAFE] NtQVM status: " << std::hex << status << std::endl;
 
-	// Safe inline syscalls ( will be crash about 0xC0000005 )
+	// Crash inline syscalls ( will be crash about 0xC0000005 )
 	// MEMORY_BASIC_INFORMATION region2 = { nullptr };
 	// const auto InlineStatus = INLINE_SYSCALL(NtQueryVirtualMemory)(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
 	// std::cout << "[+] NtQVM status: " << std::hex << InlineStatus << std::endl;
-
 
 	// Safe syscalls 
 	instance->SafeSyscall([&]() {
@@ -68,7 +67,7 @@ int main() {
 		MEMORY_BASIC_INFORMATION region2 = { nullptr };
 		const auto status2 = NtQueryVirtualMemory(GetCurrentProcess(), GetModuleHandle(nullptr), MemoryBasicInformation, &region2, sizeof(region2), nullptr);
 		// Print spoofed status
-		std::cout << "[+] NtQVM status2: " << std::hex << status2 << std::endl;
+		std::cout << "[ SAFE ] NtQVM status2: " << std::hex << status2 << std::endl;
 	});
 
 	return 0;
