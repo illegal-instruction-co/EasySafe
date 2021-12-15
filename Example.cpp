@@ -23,14 +23,16 @@ int main() {
 		"C:\\system32\\user32.dll",
 		"kernel32.dll",
 		"C:\\WINDOWS\\System32\\dbghelp.dll",
-		"C:\\WINDOWS\\System32\\symsrv.dll"
+		"C:\\WINDOWS\\System32\\symsrv.dll",
+		"api-ms-win-appmodel-runtime-l1-1-2"
 	};
 
 	auto instance = (new II::EasySafe({ true,
 		true,
 		true,
 		true,
-		true, DllWhitelist }));
+		true, 
+		DllWhitelist }));
 
 	/*
 	* Have a fantasy to do before the
@@ -52,7 +54,7 @@ int main() {
 	*/
 	instance->onSysHook([&](PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX) {
 	// Print what we know
-		instance->AddLog(1, "function: %s\n\treturn value: 0x%llx\n\treturn address: 0x%llx\n", symbol_info->Name, RAX, R10);
+		// instance->AddLog(1, "function: %s\n\treturn value: 0x%llx\n\treturn address: 0x%llx\n", symbol_info->Name, RAX, R10);
 		II::EasySafe::RegisterPayload spoof({
 			true,
 			R10,			// Original R10
@@ -66,6 +68,13 @@ int main() {
 	*/
 	instance->onLoadLibraryInjection([&](const char* dllPath) {
 		instance->AddLog(1, "Lucky DLL: %s", dllPath);
+	});
+
+	/*
+	* Setup our byte patching callback
+	*/
+	instance->onBytePatching([&](const char* module) {
+		instance->AddLog(1, "Byte patched on module: %s", module);
 	});
 
 	/*

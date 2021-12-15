@@ -49,6 +49,15 @@ namespace II {
 		std::function<void()> m_onBeforeStartCallback;
 		std::function<II::EasySafe::RegisterPayload(PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> m_onSysHookCallback;
 		std::function<void(const char* dllPath)> m_onLoadLibraryProtectionCallback;
+		std::function<void(const char* dllPath)> m_onBytePatchingProtectionCallback;
+
+		/*
+		* TO DO 
+		* Changable allowed shared paged modules ? 
+		*/
+		std::vector<std::string> m_sharedAllowedModules = {
+							std::string("C:\\WINDOWS\\System32\\bcryptPrimitives.dll")
+		};
 
 	/*
 	* Private functions
@@ -145,6 +154,62 @@ namespace II {
 
 		__forceinline result_t BytePatchingProtection() {
 			result_t hr = II_S_OK;
+
+			HMODULE hMods[1024];
+			HANDLE hProcess = GetCurrentProcess();
+			DWORD cbNeeded;
+			unsigned int i;
+
+			if (!hProcess) return II_E_NOTIMPL;
+
+			if (EnumProcessModules(hProcess, hMods, sizeof(hMods), &cbNeeded))
+			{
+				for (i = 0; i < (cbNeeded / sizeof(HMODULE)); i++)
+				{
+					TCHAR szModName[MAX_PATH];
+
+					// Get the full path to the module's file.
+
+					if (GetModuleFileNameEx(hProcess, hMods[i], szModName,
+						sizeof(szModName) / sizeof(TCHAR)))
+					{
+						std::thread([&] {
+							while (true) {
+								static auto module = GetModuleHandle(szModName);
+								static auto process = GetCurrentProcess();
+								static MODULEINFO modInfo;
+								static auto res = GetModuleInformation(process, module, &modInfo, sizeof(modInfo));
+								for (size_t i = (__int64)modInfo.lpBaseOfDll; i < (__int64)modInfo.lpBaseOfDll + modInfo.SizeOfImage; i++)
+								{
+									this->SafeSyscall([&]() {
+										MEMORY_BASIC_INFORMATION Mbi = { 0 };
+										size_t len;
+										auto result = NtQueryVirtualMemory(hProcess, (PVOID)i, MemoryBasicInformation, &Mbi, size_t(sizeof(MEMORY_BASIC_INFORMATION)), &len);
+										for (int k = 0; k < len / sizeof(PMEMORY_BASIC_INFORMATION); k++) {
+											void* manipuledAddress = ((PMEMORY_BASIC_INFORMATION)&Mbi)[k].BaseAddress;
+											for (int i = 0; i < len / sizeof(PSAPI_WORKING_SET_EX_INFORMATION); i++) {
+												if (((PPSAPI_WORKING_SET_EX_INFORMATION)&Mbi)[i].VirtualAttributes.Shared) {
+													for (auto dll : m_sharedAllowedModules)
+													{
+														std::wstring moduleW(&szModName[0]); //convert to wstring
+														std::string moduleStr(moduleW.begin(), moduleW.end());
+														if ((moduleStr != dll)) {
+															// Byte patched
+															this->AddLog(1, "Byte patched on: %s", moduleStr);
+															m_onBytePatchingProtectionCallback(moduleStr.c_str());
+														}
+													}
+												}
+											}
+										}
+									});
+								}
+								std::this_thread::sleep_for(std::chrono::milliseconds(2500));
+							}
+						}).detach();
+					}
+				}
+			}
 			return hr;
 		}
 
@@ -198,6 +263,10 @@ namespace II {
 			m_onLoadLibraryProtectionCallback = callback;
 		}
 
+		__forceinline void onBytePatching(std::function<void(const char* dllPath)> callback) {
+			m_onBytePatchingProtectionCallback = callback;
+		}
+
 		__forceinline void RunLoadLibraryInjection(const char* dllPath) {
 			return m_onLoadLibraryProtectionCallback(dllPath);
 		}
@@ -243,7 +312,7 @@ namespace II {
 			/*
 			* Start byte patching protection
 			*/
-			if (g_config.not_allow_byte_patching);
+			if (g_config.not_allow_byte_patching) if(hr = II_FAILED(BytePatchingProtection())) return hr;
 
 			// Call on start callback
 			m_onStartCallback();

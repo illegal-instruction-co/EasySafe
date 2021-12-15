@@ -17,6 +17,7 @@
 #include <thread>
 #include <future>
 #include <psapi.h>
+#include <TCHAR.H>
 
 /*
 * Core
