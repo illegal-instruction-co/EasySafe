@@ -43,10 +43,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="utility\inline_syscall\Main.cpp">
+    <ClCompile Include="EasySafe\EasySafe.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
-    <ClCompile Include="EasySafe\EasySafe.cpp">
+    <ClCompile Include="Main.cpp">
       <Filter>Kaynak Dosyalar</Filter>
     </ClCompile>
   </ItemGroup>

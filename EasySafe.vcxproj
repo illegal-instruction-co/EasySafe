@@ -150,7 +150,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="EasySafe\EasySafe.cpp" />
-    <ClCompile Include="utility\inline_syscall\Main.cpp" />
+    <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EasySafe\config.h" />
