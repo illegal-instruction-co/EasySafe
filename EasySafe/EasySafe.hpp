@@ -46,11 +46,29 @@ namespace II {
 			return m_hookedSyscalls.push_back(addr);
 		}
 
+		inline void SafeSyscall(std::function<void()> callback) {
+
+			// Check if unaffected functions don't crash
+			NtQuerySystemInformation((SYSTEM_INFORMATION_CLASS)0, nullptr, 0, nullptr);
+			i_cb.Callback = nullptr;
+
+			// Remove callback
+			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
+
+			callback();
+
+			// Set our asm callback handler
+			i_cb.Callback = medium;
+
+			// Setup the hook
+			NtSetInformationProcess(GetCurrentProcess(), (PROCESS_INFORMATION_CLASS)0x28, &i_cb, sizeof(i_cb));
+		}
+
 		inline void onSysHook(std::function<II::EasySafe::RegisterPayload (PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> callback) {
 			m_onSysHookCallback = callback;
 		}
 
-		inline II::EasySafe::RegisterPayload runSysHook(PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX) {
+		inline II::EasySafe::RegisterPayload RunSysHook(PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX) {
 			return m_onSysHookCallback(symbol_info, R10, RAX);
 		}
 
