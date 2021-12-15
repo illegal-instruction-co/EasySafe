@@ -89,7 +89,10 @@ int main() {
 	* Run EasySafe
 	*/
 	result_t hr = instance->Init();
-	std::cout << II_SUCCEEDED(hr) << std::endl;
+
+	if (II_SUCCEEDED(hr)) {
+		instance->AddLog(1, "%s", "EasySafe running...");
+	}
 
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
