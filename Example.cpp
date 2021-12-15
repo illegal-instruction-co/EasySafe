@@ -1,4 +1,4 @@
-#define NOMINMAX
+﻿#define NOMINMAX
 
 #include <iostream>
 #include <EasySafe/include/EasySafe.hpp>
@@ -14,6 +14,7 @@ int main() {
 	*   bool logs = true;
 	*	bool tests = false;
 	*   bool not_allow_byte_patching = true;
+	*	bool no_access_protection = false; // somehow can not be using with other protection methods
 	*	bool syscall_hooking = false;
 	*	bool loadlibrary_hook = false;
 	*	std::vector<std::string> dwAllowDll;
@@ -27,12 +28,15 @@ int main() {
 		"api-ms-win-appmodel-runtime-l1-1-2"
 	};
 
-	auto instance = (new II::EasySafe({ true,
+	auto instance = (new II::EasySafe({ 
 		true,
+		true,
+		false,
 		true,
 		true,
 		true, 
-		DllWhitelist }));
+		DllWhitelist 
+	}));
 
 	/*
 	* Have a fantasy to do before the
@@ -92,6 +96,19 @@ int main() {
 
 	if (II_SUCCEEDED(hr)) {
 		instance->AddLog(1, "%s", "EasySafe running...");
+	}
+	
+	/*
+	* Start NO_ACCESS protection
+	*/
+	// instance->StartNoAccessProtection();
+
+	int protectedInt = 10;
+	printf("Int addr: 0x%llx", &protectedInt);
+
+	while (true) {
+		std::cout << protectedInt << std::endl;
+		Sleep(500);
 	}
 
 	std::cin.clear();

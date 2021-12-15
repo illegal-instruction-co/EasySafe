@@ -163,6 +163,8 @@
     <ClInclude Include="EasySafe\utility\inline_syscall\in_memory_init.hpp" />
     <ClInclude Include="EasySafe\src\tests.hpp" />
     <ClInclude Include="EasySafe\utility\instrumentation_callbacks\middleware.hpp" />
+    <ClInclude Include="EasySafe\utility\no_access_protection\protect.h" />
+    <ClInclude Include="EasySafe\utility\no_access_protection\protect.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="EasySafe\utility\inline_syscall\inline_syscall.inl" />

@@ -20,6 +20,7 @@ namespace II {
 			bool tests = false;
 			bool not_allow_byte_patching = true;
 			bool syscall_hooking = false;
+			bool no_access_protection = false;
 			bool loadlibrary_hook = false;
 			std::vector<std::string> dwAllowDll;
 		};
@@ -287,6 +288,16 @@ namespace II {
 
 		__forceinline void beforeStart(std::function<void()> callback) noexcept {
 			m_onBeforeStartCallback = callback;
+		}
+
+		__forceinline result_t StartNoAccessProtection() {
+			/*
+			* No access protection
+			*/
+			if (g_config.no_access_protection) {
+				protect::initialize();
+			};
+			return II_S_OK;
 		}
 
 		__forceinline result_t Init() noexcept {

@@ -56,6 +56,13 @@
 #include <utility/instrumentation_callbacks/middleware.hpp>
 
 /*
+* No access protection 
+* -----------------
+* Credits weak1337
+*/
+#include <utility/no_access_protection/protect.h>
+
+/*
 * Byte patching hooks
 * -----------------
 * Minhook 
