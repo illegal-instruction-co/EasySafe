@@ -1,5 +1,4 @@
-# EasySafe
-<img src="https://github.com/illegal-instruction-co/EasySafe/blob/main/assets/easysafe.png?raw=true" data-canonical-src="https://github.com/illegal-instruction-co/EasySafe/blob/main/assets/easysafe.png?raw=true" width="200" height="200" />
+# <img src="https://github.com/illegal-instruction-co/EasySafe/blob/main/assets/easysafe.png?raw=true" data-canonical-src="https://github.com/illegal-instruction-co/EasySafe/blob/main/assets/easysafe.png?raw=true" width="50" height="50" /> EasySafe
 <br />
 Known ring3 memory protections that can be handled at a simple level.
 
