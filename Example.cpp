@@ -33,8 +33,8 @@ int main() {
 		true,
 		true,
 		false,
-		false,
-		false, 
+		true,
+		true, 
 		DllWhitelist 
 	}));
 
