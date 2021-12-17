@@ -93,4 +93,6 @@ namespace II {
 	extern uintptr_t SysHook(uintptr_t R10, uintptr_t RAX /*...*/);
 	extern NTSTATUS __stdcall LdrLoadDll_Detour(PWSTR SearchPath OPTIONAL, PULONG DllCharacteristics OPTIONAL, PUNICODE_STRING DllName, PVOID* BaseAddress);
 	extern LdrLoadDll_t LdrLoadDll_ptr;
+
+	extern LONG CALLBACK ExceptionDedector(PEXCEPTION_POINTERS ExceptionInfo);
 }

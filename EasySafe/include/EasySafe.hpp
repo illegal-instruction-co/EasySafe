@@ -1,4 +1,4 @@
-#pragma once 
+﻿#pragma once 
 
 #include <EasySafe/src/EasySafe.h>
 
@@ -21,6 +21,7 @@ namespace II {
 			bool not_allow_byte_patching = true;
 			bool syscall_hooking = false;
 			bool no_access_protection = false;
+			bool veh_hook_detection = false;
 			bool loadlibrary_hook = false;
 			std::vector<std::string> dwAllowDll;
 		};
@@ -31,6 +32,13 @@ namespace II {
 			uintptr_t _RAX = 0X0;
 		};
 
+		typedef LONG(WINAPI* PVECTOREDEXCEPTIONHANDLER) (PEXCEPTION_POINTERS ExceptionInfo);
+
+		typedef struct _VECTORED_EXCEPTION_NODE {
+			LIST_ENTRY ListEntry;
+			PVECTORED_EXCEPTION_HANDLER pfnHandler;//This pointer has been encrypted for security purposes
+		} VECTORED_EXCEPTION_NODE, * PVECTORED_EXCEPTION_NODE;
+
 	/*
 	* Public variables
 	*/
@@ -39,7 +47,7 @@ namespace II {
 		bool m_i_cb_flag = false;
 		std::vector<uintptr_t> m_hookedSyscalls = {};
 		std::vector<std::string> m_dwAllowDll;
-
+		int m_vehInitCooldownMS = 2000;
 	/*
 	* Private variables
 	*/
@@ -51,7 +59,9 @@ namespace II {
 		std::function<II::EasySafe::RegisterPayload(PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> m_onSysHookCallback;
 		std::function<void(const char* dllPath)> m_onLoadLibraryProtectionCallback;
 		std::function<void(const char* dllPath)> m_onBytePatchingProtectionCallback;
+		std::function<void(PVECTORED_EXCEPTION_NODE deletedHandler)> m_vehHookCallback;
 		std::vector<std::function<void()>> m_instanceTicks;
+		std::vector <PVOID> m_vecVEH;
 
 		/*
 		* TO DO 
@@ -228,6 +238,51 @@ namespace II {
 		__forceinline void Tick(std::function<void()> cb) {
 			cb();
 		}
+
+		__forceinline result_t CheckVEHHook(bool bcache, bool bdelete) {
+			result_t hr = II_S_OK;
+			PVOID pExceptionHandler = NULL;
+			PVECTORED_EXCEPTION_NODE pCurrent = NULL;
+			PVECTORED_EXCEPTION_NODE pNext = NULL, pDel = NULL;
+			pCurrent = (PVECTORED_EXCEPTION_NODE)AddVectoredExceptionHandler(0, ExceptionDedector);
+			if (pCurrent == NULL) return II_E_NOTIMPL;
+			pNext = (PVECTORED_EXCEPTION_NODE)pCurrent->ListEntry.Blink;
+			for (; pNext != pCurrent;)
+			{
+				pExceptionHandler = DecodePointer(pNext->pfnHandler);
+				if (pExceptionHandler)
+				{
+					if (bcache) this->m_vecVEH.push_back(pExceptionHandler);
+					pNext = (PVECTORED_EXCEPTION_NODE)pNext->ListEntry.Blink;
+					if (bdelete)
+					{
+						std::vector <PVOID> ::iterator findit = find(this->m_vecVEH.begin(), this->m_vecVEH.end(), pExceptionHandler);
+						if (findit == this->m_vecVEH.end())
+						{
+							pDel = pNext;
+							pNext = (PVECTORED_EXCEPTION_NODE)pNext->ListEntry.Blink;
+							if (RemoveVectoredExceptionHandler(pDel)) m_vehHookCallback(pDel);
+							else return II_E_NOTIMPL;
+							break;
+						}
+					}
+				}
+			}
+			RemoveVectoredExceptionHandler(pCurrent);
+			return hr;
+		}
+
+		__forceinline result_t VEHHookDetection() {
+			CheckVEHHook(true, false);
+			std::thread([&] {
+				for (;;) {
+					CheckVEHHook(false, false);
+					std::this_thread::sleep_for(std::chrono::milliseconds(m_vehInitCooldownMS));
+					CheckVEHHook(false, true);
+				}
+			}).detach();
+			return II_S_OK;
+		}
 	/*
 	* Public functions
 	*/
@@ -272,6 +327,10 @@ namespace II {
 
 		__forceinline void onSysHook(std::function<II::EasySafe::RegisterPayload (PSYMBOL_INFO symbol_info, uintptr_t R10, uintptr_t RAX)> callback) {
 			m_onSysHookCallback = callback;
+		}
+
+		__forceinline void onVehHook(std::function<void(PVECTORED_EXCEPTION_NODE deletedHandler)> callback) {
+			m_vehHookCallback = callback;
 		}
 
 		__forceinline void onLoadLibraryInjection(std::function<void(const char* dllPath)> callback) {
@@ -344,6 +403,11 @@ namespace II {
 			*/
 			if (g_config.not_allow_byte_patching) if(hr = II_FAILED(BytePatchingProtection())) return hr;
 
+			/*
+			* Start VEH hook detection
+			*/
+			if (g_config.veh_hook_detection) if (hr = II_FAILED(VEHHookDetection())) return hr;
+
 			// Call on start callback
 			m_onStartCallback();
 
@@ -356,6 +420,7 @@ namespace II {
 					{
 						std::thread([&]() {
 							Tick(callback);
+							m_instanceTicks.pop_back();
 						}).detach();
 					}
 					std::this_thread::sleep_for(std::chrono::milliseconds(250));

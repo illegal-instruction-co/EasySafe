@@ -1,4 +1,4 @@
-#include <EasySafe/include/EasySafe.hpp>
+﻿#include <EasySafe/include/EasySafe.hpp>
 
 namespace II {
 	__int64 g_currentInstance;
@@ -74,4 +74,18 @@ namespace II {
 	}
 
 	LdrLoadDll_t LdrLoadDll_ptr = nullptr;
+
+	typedef LONG(WINAPI* PVECTOREDEXCEPTIONHANDLER) (PEXCEPTION_POINTERS ExceptionInfo);
+
+	typedef struct _VECTORED_EXCEPTION_NODE {
+		LIST_ENTRY ListEntry;
+		PVECTORED_EXCEPTION_HANDLER pfnHandler;//This pointer has been encrypted for security purposes
+	} VECTORED_EXCEPTION_NODE, * PVECTORED_EXCEPTION_NODE;
+
+	LONG CALLBACK ExceptionDedector(PEXCEPTION_POINTERS ExceptionInfo)
+	{
+		ExceptionInfo;
+		return EXCEPTION_CONTINUE_EXECUTION;
+	}
+
 }

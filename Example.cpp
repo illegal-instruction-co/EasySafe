@@ -3,7 +3,14 @@
 #include <iostream>
 #include <EasySafe/include/EasySafe.hpp>
 
+LONG CALLBACK IllegalVEH(PEXCEPTION_POINTERS ExceptionInfo)
+{
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
 int main() {
+
+	SetConsoleTitleA("Custom Instance");
 
 	/*
 	* Setup EasySafe
@@ -16,6 +23,7 @@ int main() {
 	*   bool not_allow_byte_patching = true;
 	*	bool no_access_protection = false; // somehow can not be using with other protection methods
 	*	bool syscall_hooking = false;
+	*	bool veh_hook_detection = false;
 	*	bool loadlibrary_hook = false;
 	*	std::vector<std::string> dwAllowDll;
 	* };
@@ -33,6 +41,7 @@ int main() {
 		true,
 		true,
 		false,
+		true,
 		true,
 		true, 
 		DllWhitelist 
@@ -82,6 +91,13 @@ int main() {
 	});
 
 	/*
+	* Setup our veh hook callback
+	*/
+	instance->onVehHook([&](II::EasySafe::PVECTORED_EXCEPTION_NODE deletedHandler) {
+		instance->AddLog(1, "Veh hook detected!");
+	});
+
+	/*
 	* Have a fantasy to do after the 
 	* protection instance is started?
 	*/
@@ -103,23 +119,31 @@ int main() {
 	*/
 	// instance->StartNoAccessProtection();
 
+	/*
+	* If you want run code in EasySafe instance !
+	* Will be works as independent thread.
+	*/
 	instance->RunInInstance([&]() {
-		int protectedInt = 11;
-
-		while (true) {
-			std::cout << protectedInt << std::endl;
-			Sleep(100);
-		}
+		int protectedInt = 0xCAFEBABE;
+		std::cout << std::hex << protectedInt << std::endl;
 	});
 
 	instance->RunInInstance([&]() {
-		int protectedInt = 21;
-
-		while (true) {
-			std::cout << protectedInt << std::endl;
-			Sleep(500);
-		}
-		});
+		int protectedInt = 0xDEADBEEF;
+		std::cout << std::hex << protectedInt << std::endl;
+	});
+	
+	/*
+	* Test an illegal
+	* VEH
+	* Will be noticed us with onVehHook callback
+	* ------------
+	* TODO 
+	* ------------
+	* checks in each 2000 ms
+	* should be changable
+	*/
+	AddVectoredExceptionHandler(0, IllegalVEH);
 
 	std::cin.clear();
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
