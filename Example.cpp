@@ -18,9 +18,9 @@ int main() {
 	* First parameter is the payload
 	* --------------
 	* struct Payload {
-	*   bool logs = true;
+	*       bool logs = true;
 	*	bool tests = false;
-	*   bool not_allow_byte_patching = true;
+	*       bool not_allow_byte_patching = true;
 	*	bool no_access_protection = false; // somehow can not be using with other protection methods
 	*	bool syscall_hooking = false;
 	*	bool veh_hook_detection = false;
